@@ -1,0 +1,85 @@
+<script src="jsep.min.js"></script>
+<script src="bool-logic-validator.js"></script>
+
+<table>
+    <head>
+        <th>
+            Expression A
+        </th>
+        <th>
+            Expression B
+        </th>
+    </head>
+    <tr>
+        <td colspan="2" id="Errors" style="visibility: hidden"></td>
+    </tr>
+    <tr>
+        <td>
+            <input type="text" id="exprA" value="!(exp1 || exp2)"></input>
+        </td>
+        <td>
+            <input type="text" id="exprB" value="!exp1 && !exp2"> </input>
+        </td>
+    </tr>
+    <td colspan="2" id="Results" style="visibility: hidden">
+
+    </td>
+    <tr>
+    </tr>
+</table>
+<Button onclick="compareExpressions()">Compare</Button>
+
+<script type="text/javascript">
+    var showErrorMessage = function (message) {
+        var errorElement = document.getElementById("Errors");
+        errorElement.style.visibility = "visible";
+        errorElement.style.color = "red";
+        errorElement.innerText = message;
+    }
+
+    var hideErrorMessage = function () {
+        var errorElement = document.getElementById("Errors");
+        errorElement.style.visibility = "hidden";
+        errorElement.innerText = "";
+    }
+
+    var showResults = function (results, success) {
+        var element = document.getElementById("Results");
+        element.style.visibility = "visible";
+        element.style.color = success === true ? "green" : "red";
+        element.innerText = results;
+    }
+
+    var hideResults = function () {
+        var element = document.getElementById("Results");
+        element.style.visibility = "hidden";
+        element.innerText = "";
+    }
+
+    var compareExpressions = function () {
+        var valueA = document.getElementById("exprA").value;
+        var valueB = document.getElementById("exprB").value;
+
+        hideErrorMessage();
+        hideResults();
+
+        var errors = [];
+
+        try {
+            errors = boolLogicValidator.validate(valueA, valueB);
+        } catch (e) {
+            showErrorMessage(e.message);
+            return;
+        }
+
+        if (errors.length === 0) {
+            showResults("Identical expressions", true);
+        } else {
+            var message = "";
+            errors.forEach(function (item) {
+                message += item.combination + " ExprA=" + item.resultA + ", ExprB=" + item.resultB + "\n";
+            });
+            showResults(message, false);
+        }
+    }
+</script>
